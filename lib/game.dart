@@ -45,14 +45,32 @@ class _MyGameState extends State<MyGame> {
   static int numberOfSquares = 150;
   static int number = 0;
   double count = 0;
+  bool isGameRunning = false;
 
   void countLanded() {
     count = landed.length / 4;
     print(count);
   }
 
+  void resetGame()
+  {
+    chosenPiece = [];
+    landed = [];
+    count = 0;
+    number = 0;
+    landedPosColor = [
+      [], // red
+      [], // yellow
+      [], // purple
+      [], // green
+      [], // blue
+      [], // brown
+      [], // pink
+    ];
+  }
+
   void startGame() {
-    resetPieces();
+    resetPieces();//?
     choosePiece();
     const duration = const Duration(milliseconds: 300);
     Timer.periodic(
@@ -67,10 +85,19 @@ class _MyGameState extends State<MyGame> {
             landedPosColor[number % pieces.length].add(chosenPiece[i]);
           }
           number++;
-          startGame();
+
+          if(isGameRunning)
+          {
+            startGame();
+          }
+
           timer.cancel();
         } else {
-          moveDown();
+          if(isGameRunning)
+          {
+            moveDown();
+          }
+
         }
       },
     );
@@ -155,6 +182,8 @@ class _MyGameState extends State<MyGame> {
         }
       });
     }
+
+    //?
     for (int i = 0; i < chosenPiece.length; i++) {
       if (landed.contains(chosenPiece[i] - 1) ||
           (chosenPiece[i] - 1) % 10 == 0) {}
@@ -735,10 +764,26 @@ class _MyGameState extends State<MyGame> {
                 children: <Widget>[
                   Expanded(
                       child: GestureDetector(
-                        onTap: startGame,
+                        onTap: (){
+                          if(isGameRunning)
+                          {
+                            setState(() {
+                              isGameRunning = false;
+                            });
+                            resetGame();
+                          }
+                          else
+                          {
+                            setState(() {
+                              isGameRunning = true;
+                            });
+                            startGame();
+                          }
+
+                        },
                         child: MyButton(
                           child: Text(
-                            "PLAY",
+                            isGameRunning ? "RESET" :"PLAY" ,
                             style: TextStyle(color: Colors.white, fontSize: 25),
                           ),
                         ),
