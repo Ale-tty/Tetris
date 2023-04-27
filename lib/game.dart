@@ -46,6 +46,7 @@ class _MyGameState extends State<MyGame> {
   static int number = 0;
   double count = 0;
   bool isGameRunning = false;
+  bool isGameOver = false;
 
   void countLanded() {
     count = landed.length / 4;
@@ -76,29 +77,55 @@ class _MyGameState extends State<MyGame> {
     Timer.periodic(
       duration,
           (Timer timer) {
-        clearRow();
-        //print(landedPosColor);
 
-        if (hitFloor()) {
-          for (int i = 0; i < chosenPiece.length; i++) {
-            landed.add(chosenPiece[i]);
-            landedPosColor[number % pieces.length].add(chosenPiece[i]);
-          }
-          number++;
-
-          if(isGameRunning)
-          {
-            startGame();
-          }
-
+        if(isGameOver){
           timer.cancel();
-        } else {
-          if(isGameRunning)
-          {
-            moveDown();
+          showDialog(context: context, builder: (context){
+            return AlertDialog(
+              title: Text("Perdiste :("),
+              content: Text("Presiona OK para reiniciar el juego"),
+              actions: <Widget>[
+                TextButton(child: Text("OK"), onPressed: () {
+                  resetGame();
+                  isGameOver = false;
+                  Navigator.of(context).pop();
+                }, )
+              ],
+            );
+          });
+        } else{
+          clearRow();
+          //print(landedPosColor);
+
+          if (hitFloor()) {
+            for (int i = 0; i < chosenPiece.length; i++) {
+              landed.add(chosenPiece[i]);
+              landedPosColor[number % pieces.length].add(chosenPiece[i]);
+            }
+            number++;
+
+            if(isGameRunning)
+            {
+              startGame();
+            }
+
+            timer.cancel();
+          } else {
+            if(isGameRunning)
+            {
+              moveDown();
+            }
           }
 
+          if(hitCeiling()){
+            isGameOver = true;
+
+          }
         }
+
+
+
+
       },
     );
   }
@@ -221,6 +248,16 @@ class _MyGameState extends State<MyGame> {
     }
 
     return hitFloor;
+  }
+
+  bool hitCeiling() {
+      for(int i = 0; i< 10; i++ ){
+        if(landed.contains(i)){
+          return true;
+        }
+      }
+
+      return false;
   }
 
   void rotatePiece() {
