@@ -55,19 +55,22 @@ class _MyGameState extends State<MyGame> {
 
   void resetGame()
   {
-    chosenPiece = [];
-    landed = [];
-    count = 0;
-    number = 0;
-    landedPosColor = [
-      [], // red
-      [], // yellow
-      [], // purple
-      [], // green
-      [], // blue
-      [], // brown
-      [], // pink
-    ];
+    setState(() {
+      chosenPiece = [];
+      landed = [];
+      count = 0;
+      number = 0;
+      landedPosColor = [
+        [], // red
+        [], // yellow
+        [], // purple
+        [], // green
+        [], // blue
+        [], // brown
+        [], // pink
+      ];
+    });
+
   }
 
   void startGame() {
