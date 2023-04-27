@@ -49,7 +49,7 @@ class _MyGameState extends State<MyGame> {
 
   void countLanded() {
     count = landed.length / 4;
-    print(count);
+    //print(count);
   }
 
   void resetGame()
@@ -77,7 +77,7 @@ class _MyGameState extends State<MyGame> {
       duration,
           (Timer timer) {
         clearRow();
-        print(landedPosColor);
+        //print(landedPosColor);
 
         if (hitFloor()) {
           for (int i = 0; i < chosenPiece.length; i++) {
@@ -126,8 +126,9 @@ class _MyGameState extends State<MyGame> {
       removeRow.clear();
       count = 0;
       for (int j = 0; j < 10; j++) {
+
         if (landed.contains(numberOfSquares - 1 - i * 10 - j)) {
-          removeRow.add(179 - i * 10 - j);
+          removeRow.add(numberOfSquares - i * 10 - j);
           count++;
         }
 
@@ -172,7 +173,6 @@ class _MyGameState extends State<MyGame> {
   }
 
   void moveLeft() {
-    HapticFeedback.vibrate();
     if (chosenPiece.any(
             (element) => (element) % 10 == 0 || landed.contains(element - 1))) {
     } else {
@@ -191,7 +191,6 @@ class _MyGameState extends State<MyGame> {
   }
 
   void moveRight() {
-    HapticFeedback.lightImpact();
     if (chosenPiece.any(
             (element) => (element + 1) % 10 == 0 || landed.contains(element + 1))) {
     } else {

@@ -22,7 +22,7 @@ class MyGrid extends StatelessWidget {
   int count = 0;
   void countLanded() {
     count = landedPieces / 4;
-    print(count);
+    //print(count);
   }
 
   @override
