@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'button.dart';
 import 'grid.dart';
-import 'package:flutter/services.dart';
+//import 'package:flutter/services.dart';
+import 'package:soundpool/soundpool.dart';
 
 class MyGame extends StatefulWidget {
   @override
@@ -47,6 +49,7 @@ class _MyGameState extends State<MyGame> {
   double count = 0;
   bool isGameRunning = false;
   bool isGameOver = false;
+  int score = 0;
 
   void countLanded() {
     count = landed.length / 4;
@@ -69,11 +72,26 @@ class _MyGameState extends State<MyGame> {
         [], // brown
         [], // pink
       ];
+      score = 0;
     });
+
 
   }
 
+  void playMusic() async {
+    print("!!!!!!!!!!!!!!!!!!!!");
+    Soundpool pool = Soundpool.fromOptions();
+    int soundId = await rootBundle
+        .load("assets/audios/tetris.mp3") //your sound file name here
+        .then((ByteData soundData) {
+      return pool!.load(soundData);
+    });
+
+    pool!.play(soundId!);
+  }
+
   void startGame() {
+
     resetPieces();//?
     choosePiece();
     const duration = const Duration(milliseconds: 300);
@@ -85,12 +103,13 @@ class _MyGameState extends State<MyGame> {
           timer.cancel();
           showDialog(context: context, builder: (context){
             return AlertDialog(
-              title: Text("Perdiste :("),
+              title: Text("Perdiste :( tu score fue de $score"),
               content: Text("Presiona OK para reiniciar el juego"),
               actions: <Widget>[
                 TextButton(child: Text("OK"), onPressed: () {
                   resetGame();
                   isGameOver = false;
+                  isGameRunning = false;
                   Navigator.of(context).pop();
                 }, )
               ],
@@ -160,10 +179,13 @@ class _MyGameState extends State<MyGame> {
         if (landed.contains(numberOfSquares - 1 - i * 10 - j)) {
           removeRow.add(numberOfSquares - i * 10 - j);
           count++;
+
         }
 
         if (count == 10) {
           setState(() {
+            score += 10;
+
             removeRow.forEach((element) => landed.remove(element));
             for (int q = 0; q < pieces.length; q++) {
               removeRow.forEach((element) => landedPosColor[q].remove(element));
@@ -182,6 +204,8 @@ class _MyGameState extends State<MyGame> {
                 }
               }
             }
+
+
           });
         }
       }
@@ -798,6 +822,17 @@ class _MyGameState extends State<MyGame> {
                   newColor: pieceColor[number % pieces.length],
                 )),
             Container(
+              height: 50,
+              child: Text(
+                'Tu score es de ${score}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            Container(
               height: 100,
               child: Row(
                 children: <Widget>[
@@ -816,6 +851,7 @@ class _MyGameState extends State<MyGame> {
                             setState(() {
                               isGameRunning = true;
                             });
+                            playMusic();
                             startGame();
                           }
 
