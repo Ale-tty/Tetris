@@ -98,13 +98,21 @@ class _MyGameState extends State<MyGame> {
           player.stop();
           showDialog(context: context, builder: (context){
             return AlertDialog(
-              backgroundColor: Colors.black,
-              title: Text("Perdiste :( \n tu score fue de $score",
-                style: TextStyle(color: Colors.red),
+              backgroundColor: Colors.black45,
+              title: Text("Perdiste :( \n \nTu score fue de: $score",
+                style: TextStyle(fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red),
               ),
-              content: Text("Presiona OK para reiniciar el juego"),
+              content: Text("Presiona OK para reiniciar el juego",
+                style: TextStyle(fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red),),
               actions: <Widget>[
-                TextButton(child: Text("OK"), onPressed: () {
+                TextButton(child: Text("OK",
+                  style: TextStyle(fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.pinkAccent),), onPressed: () {
                   resetGame();
                   isGameOver = false;
                   isGameRunning = false;
