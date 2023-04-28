@@ -1,10 +1,9 @@
 import 'dart:async';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'button.dart';
 import 'grid.dart';
 //import 'package:flutter/services.dart';
-import 'package:soundpool/soundpool.dart';
 
 class MyGame extends StatefulWidget {
   @override
@@ -50,6 +49,14 @@ class _MyGameState extends State<MyGame> {
   bool isGameRunning = false;
   bool isGameOver = false;
   int score = 0;
+  AssetsAudioPlayer player = AssetsAudioPlayer();
+
+  @override
+  void initState(){
+    super.initState();
+
+    player.open(Audio("assets/audios/tetris.mp3"), autoStart: false, loopMode: LoopMode.single);
+  }
 
   void countLanded() {
     count = landed.length / 4;
@@ -78,20 +85,7 @@ class _MyGameState extends State<MyGame> {
 
   }
 
-  void playMusic() async {
-    print("!!!!!!!!!!!!!!!!!!!!");
-    Soundpool pool = Soundpool.fromOptions();
-    int soundId = await rootBundle
-        .load("assets/audios/tetris.mp3") //your sound file name here
-        .then((ByteData soundData) {
-      return pool!.load(soundData);
-    });
-
-    pool!.play(soundId!);
-  }
-
   void startGame() {
-
     resetPieces();//?
     choosePiece();
     const duration = const Duration(milliseconds: 300);
@@ -101,9 +95,13 @@ class _MyGameState extends State<MyGame> {
 
         if(isGameOver){
           timer.cancel();
+          player.stop();
           showDialog(context: context, builder: (context){
             return AlertDialog(
-              title: Text("Perdiste :( tu score fue de $score"),
+              backgroundColor: Colors.black,
+              title: Text("Perdiste :( \n tu score fue de $score",
+                style: TextStyle(color: Colors.red),
+              ),
               content: Text("Presiona OK para reiniciar el juego"),
               actions: <Widget>[
                 TextButton(child: Text("OK"), onPressed: () {
@@ -844,6 +842,7 @@ class _MyGameState extends State<MyGame> {
                             setState(() {
                               isGameRunning = false;
                             });
+                            player.stop();
                             resetGame();
                           }
                           else
@@ -851,7 +850,7 @@ class _MyGameState extends State<MyGame> {
                             setState(() {
                               isGameRunning = true;
                             });
-                            playMusic();
+                            player.play();
                             startGame();
                           }
 
